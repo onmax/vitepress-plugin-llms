@@ -1,7 +1,7 @@
 {
 	"name": "onmax-vitepress-plugin-llms",
 	"description": "📜 A VitePress plugin for generating LLM-friendly documentation",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"license": "MIT",
 	"author": "Okinea Dev <hi@okinea.dev> (https://github.com/okineadev)",
 	"repository": {
