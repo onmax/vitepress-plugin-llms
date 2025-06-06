@@ -3,6 +3,7 @@ import type { DefaultTheme } from 'vitepress'
 import type { PreparedFile } from '../src/types'
 
 export const outDir = 'dist'
+export const srcDir = 'docs'
 
 const blah = 'blah blah blah...'
 export const sampleDomain = 'https://example.com'
