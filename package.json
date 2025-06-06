@@ -1,7 +1,7 @@
 {
-	"name": "vitepress-plugin-llms",
+	"name": "onmax-vitepress-plugin-llms",
 	"description": "📜 A VitePress plugin for generating LLM-friendly documentation",
-	"version": "1.3.4",
+	"version": "0.0.1",
 	"license": "MIT",
 	"author": "Okinea Dev <hi@okinea.dev> (https://github.com/okineadev)",
 	"repository": {
@@ -25,6 +25,7 @@
 		"format": "biome format --write",
 		"test": "bun test",
 		"preversion": "bun run format && git add .",
+		"release": "bumpp && bun publish",
 		"build": "bunup",
 		"prepare": "husky"
 	},
@@ -48,6 +49,7 @@
 		"@biomejs/biome": "1.9.4",
 		"@types/byte-size": "^8.1.2",
 		"@types/node": "^22.15.18",
+		"bumpp": "^10.1.1",
 		"bun-types": "^1.2.13",
 		"bunup": "0.8.6",
 		"husky": "^9.1.7",

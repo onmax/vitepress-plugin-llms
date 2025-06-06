@@ -93,7 +93,9 @@ export function organizeFilesByDepth(
 	// Group files by directory
 	for (const file of preparedFiles) {
 		const relativePath = path.relative(srcDir, file.path)
-		const dirParts = path.dirname(relativePath).split(path.sep)
+		// Normalize path separators to forward slashes for consistent behavior
+		const normalizedPath = relativePath.replace(/\\/g, '/')
+		const dirParts = path.dirname(normalizedPath).split('/')
 
 		// Generate directory paths for each depth level
 		for (let d = 1; d <= Math.min(depth, dirParts.length + 1); d++) {
@@ -265,7 +267,8 @@ export async function generateDirectoryLLMsTxt(
 
 {details}
 
-{navigation}## Documentation
+{navigation}
+## Documentation
 
 {toc}`
 

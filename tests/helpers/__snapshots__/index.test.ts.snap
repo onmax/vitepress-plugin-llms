@@ -138,6 +138,7 @@ Documentation and guides for guide.
 - [Api](/api/llms.txt): Api documentation
 - [Examples](/examples/llms.txt): Examples documentation
 
+
 ## Documentation
 
 - [Getting started](/guide/getting-started.md): Instructions on how to get started with the tool
@@ -152,7 +153,8 @@ exports[`generateDirectoryLLMsTxt generates llms.txt without navigation when dis
 
 > Documentation for the api section
 
-Documentation and guides for api.## Documentation
+Documentation and guides for api.
+## Documentation
 
 - [API Reference](/api/reference.md)
 - [API Examples](/api/examples.md)
@@ -171,6 +173,7 @@ Documentation and guides for advanced.
 ## Navigation
 
 - [Guide](https://example.com/guide/llms.txt): Parent documentation section
+
 
 ## Documentation
 
