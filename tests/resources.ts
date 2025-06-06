@@ -167,3 +167,65 @@ export const preparedFilesWithCommonPrefixSample = ({
 		file: matter(fakeGettingStartedMd),
 	},
 ]
+
+export const preparedFilesDepthSample = ({
+	srcDir = 'docs',
+}: {
+	srcDir?: LlmstxtSettings['workDir']
+}): PreparedFile[] => [
+	{
+		title: 'Documentation Home',
+		path: `${srcDir}/index.md`,
+		file: matter(fakeIndexMd),
+	},
+	{
+		title: 'Getting started',
+		path: `${srcDir}/guide/getting-started.md`,
+		file: matter(fakeGettingStartedMd),
+	},
+	{
+		title: 'Installation Guide',
+		path: `${srcDir}/guide/installation.md`,
+		file: matter(fakeQuickstartMd),
+	},
+	{
+		title: 'Advanced Configuration',
+		path: `${srcDir}/guide/advanced/configuration.md`,
+		file: matter(fakeMarkdownDocument),
+	},
+	{
+		title: 'Performance Tuning',
+		path: `${srcDir}/guide/advanced/performance.md`,
+		file: matter(fakeMarkdownDocument),
+	},
+	{
+		title: 'API Reference',
+		path: `${srcDir}/api/reference.md`,
+		file: matter(fakeMarkdownDocument),
+	},
+	{
+		title: 'API Examples',
+		path: `${srcDir}/api/examples.md`,
+		file: matter(fakeMarkdownDocument),
+	},
+	{
+		title: 'Components API',
+		path: `${srcDir}/api/v2/components.md`,
+		file: matter(fakeMarkdownDocument),
+	},
+	{
+		title: 'Hooks API',
+		path: `${srcDir}/api/v2/hooks.md`,
+		file: matter(fakeMarkdownDocument),
+	},
+	{
+		title: 'Basic Example',
+		path: `${srcDir}/examples/basic.md`,
+		file: matter(fakeMarkdownDocument),
+	},
+	{
+		title: 'Advanced Example',
+		path: `${srcDir}/examples/advanced.md`,
+		file: matter(fakeMarkdownDocument),
+	},
+]
