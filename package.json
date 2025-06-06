@@ -25,6 +25,7 @@
 		"format": "biome format --write",
 		"test": "bun test",
 		"preversion": "bun run format && git add .",
+		"release": "bumpp && bun publish",
 		"build": "bunup",
 		"prepare": "husky"
 	},
@@ -48,6 +49,7 @@
 		"@biomejs/biome": "1.9.4",
 		"@types/byte-size": "^8.1.2",
 		"@types/node": "^22.15.18",
+		"bumpp": "^10.1.1",
 		"bun-types": "^1.2.13",
 		"bunup": "0.8.6",
 		"husky": "^9.1.7",
