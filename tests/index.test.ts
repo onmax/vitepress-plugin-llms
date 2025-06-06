@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, mock, spyOn } from 'bun:test'
 import type { ViteDevServer } from 'vite'
 import type { Plugin } from 'vitepress'
 import { mockedFs } from './mocks/fs'
-import { fakeMarkdownDocument } from './resources'
+import { fakeMarkdownDocument, srcDir, preparedFilesDepthSample } from './resources'
 
 mock.module('node:fs/promises', () => mockedFs)
 const { access, mkdir, writeFile } = mockedFs.default
@@ -195,6 +195,130 @@ describe('llmstxt plugin', () => {
 
 			expect(writeFile).toHaveBeenCalledTimes(1)
 			expect(writeFile.mock?.lastCall?.[1]).toMatchSnapshot()
+		})
+
+		it('generates depth-based llms.txt files', async () => {
+			const files = preparedFilesDepthSample({ srcDir })
+
+			plugin = llmstxt({
+				generateLLMsTxt: true,
+				generateLLMsFullTxt: false,
+				generateLLMFriendlyDocsForEachPage: false,
+				depth: 2,
+				minFilesPerChunk: 2,
+				includeNavigation: true,
+			})
+
+			// @ts-ignore
+			plugin[1].configResolved(mockConfig)
+
+			// Mock file reading with specific content for index.md
+			const { readFile } = mockedFs.default
+			readFile.mockResolvedValue(`---
+title: Test Documentation
+description: Test description for docs
+---
+
+# Test Documentation
+
+This is the main documentation.`)
+
+			// Setup mock transform results
+			for (const file of files) {
+				// @ts-ignore
+				await plugin[0].transform(file.file.orig || fakeMarkdownDocument, file.path)
+			}
+
+			// @ts-ignore
+			await plugin[1].generateBundle()
+
+			// Should generate multiple llms.txt files based on depth
+			const writtenFiles = writeFile.mock.calls
+			const llmsTxtFiles = writtenFiles.filter(([path]) => path.endsWith('llms.txt'))
+
+			expect(llmsTxtFiles.length).toBeGreaterThan(1)
+
+			// Should have root llms.txt
+			const rootLlms = llmsTxtFiles.find(([path]) => path.endsWith('/llms.txt'))
+			expect(rootLlms).toBeDefined()
+
+			// Should have directory-specific llms.txt files
+			const guideLlms = llmsTxtFiles.find(([path]) => path.includes('guide/llms.txt'))
+			const apiLlms = llmsTxtFiles.find(([path]) => path.includes('api/llms.txt'))
+
+			expect(guideLlms).toBeDefined()
+			expect(apiLlms).toBeDefined()
+
+			// Verify files were created in correct directories (simplified test)
+			expect(guideLlms![0]).toContain('guide/llms.txt')
+			expect(apiLlms![0]).toContain('api/llms.txt')
+
+			// Verify content structure exists
+			const guideContent = guideLlms?.[1] as string
+			expect(guideContent.length).toBeGreaterThan(0)
+		})
+
+		it('respects depth setting of 1 (root only)', async () => {
+			const files = preparedFilesDepthSample({ srcDir })
+
+			plugin = llmstxt({
+				generateLLMsTxt: true,
+				generateLLMsFullTxt: false,
+				generateLLMFriendlyDocsForEachPage: false,
+				depth: 1, // Only root
+				minFilesPerChunk: 2,
+			})
+
+			// @ts-ignore
+			plugin[1].configResolved(mockConfig)
+
+			// Setup mock transform results
+			for (const file of files) {
+				// @ts-ignore
+				await plugin[0].transform(file.file.orig || fakeMarkdownDocument, file.path)
+			}
+
+			// @ts-ignore
+			await plugin[1].generateBundle()
+
+			// Should only generate root llms.txt
+			const writtenFiles = writeFile.mock.calls
+			const llmsTxtFiles = writtenFiles.filter(([path]) => path.endsWith('llms.txt'))
+
+			expect(llmsTxtFiles).toHaveLength(1)
+			expect(llmsTxtFiles[0][0]).toMatch(/\/llms\.txt$/)
+		})
+
+		it('respects minFilesPerChunk setting', async () => {
+			const files = preparedFilesDepthSample({ srcDir })
+
+			plugin = llmstxt({
+				generateLLMsTxt: true,
+				generateLLMsFullTxt: false,
+				generateLLMFriendlyDocsForEachPage: false,
+				depth: 3,
+				minFilesPerChunk: 5, // High threshold
+			})
+
+			// @ts-ignore
+			plugin[1].configResolved(mockConfig)
+
+			// Setup mock transform results
+			for (const file of files) {
+				// @ts-ignore
+				await plugin[0].transform(file.file.orig || fakeMarkdownDocument, file.path)
+			}
+
+			// @ts-ignore
+			await plugin[1].generateBundle()
+
+			// Should generate fewer files due to high minFilesPerChunk
+			const writtenFiles = writeFile.mock.calls
+			const llmsTxtFiles = writtenFiles.filter(([path]) => path.endsWith('llms.txt'))
+
+			// Should have at least root, but fewer subdirectory files
+			expect(llmsTxtFiles.length).toBeGreaterThanOrEqual(1)
+			expect(llmsTxtFiles.length).toBeLessThan(6) // Less than total possible directories
 		})
 	})
 })

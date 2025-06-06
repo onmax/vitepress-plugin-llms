@@ -103,3 +103,78 @@ url: 'https://example.com/test/other.md'
 # Some cool stuff
 "
 `;
+
+exports[`generateDirectoryLLMsTxt generates llms.txt for root directory 1`] = `
+"# Test Documentation
+
+> Blazing fast frontend tool
+
+## Table of Contents
+
+- [Documentation Home](/index.md): Blazing fast frontend tool
+- [Getting started](/guide/getting-started.md): Instructions on how to get started with the tool
+- [Installation Guide](/guide/installation.md): Instructions for quick project initialization
+- [Advanced Configuration](/guide/advanced/configuration.md)
+- [Performance Tuning](/guide/advanced/performance.md)
+- [API Reference](/api/reference.md)
+- [API Examples](/api/examples.md)
+- [Components API](/api/v2/components.md)
+- [Hooks API](/api/v2/hooks.md)
+- [Basic Example](/examples/basic.md)
+- [Advanced Example](/examples/advanced.md)
+"
+`;
+
+exports[`generateDirectoryLLMsTxt generates llms.txt for subdirectory with navigation 1`] = `
+"# Guide Documentation
+
+> Documentation for the guide section
+
+Documentation and guides for guide.
+
+## Navigation
+
+- [Documentation Overview](/llms.txt): Parent documentation section
+- [Api](/api/llms.txt): Api documentation
+- [Examples](/examples/llms.txt): Examples documentation
+
+## Documentation
+
+- [Getting started](/guide/getting-started.md): Instructions on how to get started with the tool
+- [Installation Guide](/guide/installation.md): Instructions for quick project initialization
+- [Advanced Configuration](/guide/advanced/configuration.md)
+- [Performance Tuning](/guide/advanced/performance.md)
+"
+`;
+
+exports[`generateDirectoryLLMsTxt generates llms.txt without navigation when disabled 1`] = `
+"# Api Documentation
+
+> Documentation for the api section
+
+Documentation and guides for api.## Documentation
+
+- [API Reference](/api/reference.md)
+- [API Examples](/api/examples.md)
+- [Components API](/api/v2/components.md)
+- [Hooks API](/api/v2/hooks.md)
+"
+`;
+
+exports[`generateDirectoryLLMsTxt generates llms.txt with domain in navigation links 1`] = `
+"# Advanced Documentation
+
+> Documentation for the advanced section
+
+Documentation and guides for advanced.
+
+## Navigation
+
+- [Guide](https://example.com/guide/llms.txt): Parent documentation section
+
+## Documentation
+
+- [Advanced Configuration](https://example.com/guide/advanced/configuration.md)
+- [Performance Tuning](https://example.com/guide/advanced/performance.md)
+"
+`;

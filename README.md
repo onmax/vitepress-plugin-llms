@@ -83,6 +83,60 @@ This configuration does the following:
 - `title`: Sets a custom header in `llms.txt`, for your custom variables use `customTemplateVariables`.
 - `customTemplateVariables`: Sets custom variables for the template, replaces `{foo}` with `bar`.
 
+#### Depth-based Generation
+
+You can now generate `llms.txt` files at different directory levels for better organization:
+
+```ts
+import { defineConfig } from 'vitepress'
+import llmstxt from 'vitepress-plugin-llms'
+
+export default defineConfig({
+  vite: {
+    plugins: [
+      llmstxt({
+        depth: 2,                    // Generate llms.txt for root + top-level directories
+        minFilesPerChunk: 3,         // Only create llms.txt for directories with 3+ files
+        includeNavigation: true,     // Include navigation links between related sections
+      })
+    ]
+  }
+})
+```
+
+With `depth: 2`, your file structure will look like:
+
+```
+.vitepress/dist/
+├── llms.txt                    # Root overview with links to all sections
+├── llms-full.txt               # Complete documentation (if enabled)
+├── guide/
+│   ├── llms.txt               # Guide-specific documentation with navigation
+│   ├── getting-started.html
+│   └── installation.html
+├── api/
+│   ├── llms.txt               # API-specific documentation with navigation
+│   ├── components.html
+│   └── plugins.html
+└── examples/
+    ├── llms.txt               # Examples-specific documentation with navigation
+    ├── basic.html
+    └── advanced.html
+```
+
+**Depth Options:**
+- `depth: 1` (default): Only root `llms.txt`
+- `depth: 2`: Root + top-level directories (e.g., `guide/llms.txt`, `api/llms.txt`)
+- `depth: 3`: Root + two levels of nesting (e.g., `api/v2/llms.txt`)
+
+**Navigation Features:**
+Each directory-specific `llms.txt` includes navigation links to:
+- **Parent**: Link to the parent directory's `llms.txt`
+- **Siblings**: Links to other directories at the same level
+- **Children**: Links to direct subdirectory `llms.txt` files
+
+This follows the [llmstxt.org specification](https://llmstxt.org/) for optimal LLM consumption.
+
 #### Embedding content specifically for LLMs with `<llm-only>` tag
 
 You can add a content that will be visible in files for LLMs, but invisible to humans, this can be useful for setting special instructions like "Refer to #basic-queries for demonstrations", "NEVER do ....", "ALWAYS use ... in case of ..." etc.
@@ -149,6 +203,8 @@ The file structure in `.vitepress/dist` folder will be as follows:
 - 🤖 An LLM-friendly version is generated for each page
 - 📝 Generates `llms.txt` with section links
 - 📖 Generates `llms-full.txt` with all content in one file
+- 📁 Depth-based generation for hierarchical `llms.txt` files
+- 🧭 Smart navigation between related documentation sections
 
 ## 📖 [llmstxt.org](https://llmstxt.org/) Standard
 

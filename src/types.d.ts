@@ -175,6 +175,37 @@ export interface LlmstxtSettings extends TemplateVariables {
 	excludeTeam?: boolean
 
 	/**
+	 * Controls how many directory levels to generate llms.txt files for.
+	 *
+	 * - 1 (default): Only root llms.txt
+	 * - 2: Root + llms.txt for each top-level directory
+	 * - 3: Root + two levels of directories
+	 *
+	 * Files are generated in their respective directories (e.g., api/llms.txt, guide/llms.txt)
+	 * following the llmstxt.org specification.
+	 *
+	 * @default 1
+	 * @see https://llmstxt.org/
+	 */
+	depth?: number
+
+	/**
+	 * Minimum number of files required to generate an llms.txt file for a directory.
+	 * Prevents creating files for directories with very few files.
+	 *
+	 * @default 2
+	 */
+	minFilesPerChunk?: number
+
+	/**
+	 * Whether to include navigation links between related llms.txt files.
+	 * Includes links to parent, siblings, and direct children only.
+	 *
+	 * @default true
+	 */
+	includeNavigation?: boolean
+
+	/**
 	 * A custom template for the `llms.txt` file, allowing for a personalized order of elements.
 	 *
 	 * Available template elements include:

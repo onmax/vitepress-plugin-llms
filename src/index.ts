@@ -18,7 +18,12 @@ import { millify } from 'millify'
 import { approximateTokenSize } from 'tokenx'
 import { defaultLLMsTxtTemplate, fullTagRegex, unnecessaryFilesList } from './constants'
 import viteDevServerMiddleware from './devserer-middleware'
-import { generateLLMsFullTxt, generateLLMsTxt } from './helpers/index'
+import {
+	generateDirectoryLLMsTxt,
+	generateLLMsFullTxt,
+	generateLLMsTxt,
+	organizeFilesByDepth,
+} from './helpers/index'
 import log from './helpers/logger'
 import { expandTemplate, extractTitle, generateMetadata, getHumanReadableSizeOf } from './helpers/utils'
 import type { CustomTemplateVariables, LlmstxtSettings, PreparedFile, VitePressConfig } from './types'
@@ -50,6 +55,9 @@ function llmstxt(userSettings: LlmstxtSettings = {}): [Plugin, Plugin] {
 		excludeTeam: true,
 		workDir: undefined as unknown as string,
 		stripHTML: true,
+		depth: 1,
+		minFilesPerChunk: 2,
+		includeNavigation: true,
 		...userSettings,
 	}
 
@@ -96,8 +104,11 @@ function llmstxt(userSettings: LlmstxtSettings = {}): [Plugin, Plugin] {
 					}
 				}
 
+				// Ensure content is a string before processing
+				const contentStr = typeof content === 'string' ? content : String(content)
+
 				// strip content between <llm-only> and </llm-only>
-				const modifiedContent = content
+				const modifiedContent = contentStr
 					.replace(fullTagRegex('llm-only', 'g'), '')
 					.replace(fullTagRegex('llm-exclude', 'g'), '$1')
 				// remove <llm-exclude> tags, keep the content
@@ -233,46 +244,68 @@ function llmstxt(userSettings: LlmstxtSettings = {}): [Plugin, Plugin] {
 				const tasks: Promise<void>[] = []
 
 				if (settings.generateLLMsTxt) {
-					const llmsTxtPath = path.resolve(outDir, 'llms.txt')
-					const templateVariables: CustomTemplateVariables = {
-						title: settings.title,
-						description: settings.description,
-						details: settings.details,
-						toc: settings.toc,
-						...settings.customTemplateVariables,
-					}
-
-					tasks.push(
-						(async () => {
-							log.info(`Generating ${pc.cyan('llms.txt')}...`)
-
-							const llmsTxt = await generateLLMsTxt(preparedFiles, {
-								indexMd: path.resolve(settings.workDir, 'index.md'),
-								srcDir: settings.workDir,
-								LLMsTxtTemplate: settings.customLLMsTxtTemplate || defaultLLMsTxtTemplate,
-								templateVariables,
-								vitepressConfig: config?.vitepress?.userConfig,
-								domain: settings.domain,
-								sidebar: resolvedSidebar,
-								linksExtension: !settings.generateLLMFriendlyDocsForEachPage ? '.html' : undefined,
-								cleanUrls: config.cleanUrls,
-							})
-
-							await fs.writeFile(llmsTxtPath, llmsTxt, 'utf-8')
-
-							log.success(
-								expandTemplate(
-									'Generated {file} (~{tokens} tokens, {size}) with {fileCount} documentation links',
-									{
-										file: pc.cyan('llms.txt'),
-										tokens: pc.bold(millify(approximateTokenSize(llmsTxt))),
-										size: pc.bold(getHumanReadableSizeOf(llmsTxt)),
-										fileCount: pc.bold(fileCount.toString()),
-									},
-								),
-							)
-						})(),
+					// Organize files by depth for hierarchical llms.txt generation
+					const directoryChunks = organizeFilesByDepth(
+						preparedFiles,
+						settings.workDir,
+						settings.depth || 1,
+						settings.minFilesPerChunk || 2,
 					)
+
+					// Generate llms.txt files for each directory chunk
+					for (const chunk of directoryChunks) {
+						const isRoot = chunk.dirPath === ''
+						const llmsTxtPath = isRoot
+							? path.resolve(outDir, 'llms.txt')
+							: path.resolve(outDir, chunk.dirPath, 'llms.txt')
+
+						const templateVariables: CustomTemplateVariables = {
+							title: settings.title,
+							description: settings.description,
+							details: settings.details,
+							toc: settings.toc,
+							...settings.customTemplateVariables,
+						}
+
+						tasks.push(
+							(async () => {
+								const displayPath = isRoot ? 'llms.txt' : `${chunk.dirPath}/llms.txt`
+								log.info(`Generating ${pc.cyan(displayPath)}...`)
+
+								// Create directory if it doesn't exist
+								if (!isRoot) {
+									await fs.mkdir(path.dirname(llmsTxtPath), { recursive: true })
+								}
+
+								const llmsTxt = await generateDirectoryLLMsTxt(chunk, {
+									indexMd: path.resolve(settings.workDir, 'index.md'),
+									srcDir: settings.workDir,
+									LLMsTxtTemplate: settings.customLLMsTxtTemplate || defaultLLMsTxtTemplate,
+									templateVariables,
+									vitepressConfig: config?.vitepress?.userConfig,
+									domain: settings.domain,
+									sidebar: resolvedSidebar,
+									linksExtension: !settings.generateLLMFriendlyDocsForEachPage ? '.html' : undefined,
+									cleanUrls: config.cleanUrls,
+									includeNavigation: settings.includeNavigation,
+								})
+
+								await fs.writeFile(llmsTxtPath, llmsTxt, 'utf-8')
+
+								log.success(
+									expandTemplate(
+										'Generated {file} (~{tokens} tokens, {size}) with {fileCount} documentation links',
+										{
+											file: pc.cyan(displayPath),
+											tokens: pc.bold(millify(approximateTokenSize(llmsTxt))),
+											size: pc.bold(getHumanReadableSizeOf(llmsTxt)),
+											fileCount: pc.bold(chunk.files.length.toString()),
+										},
+									),
+								)
+							})(),
+						)
+					}
 				}
 
 				// Generate llms-full.txt - all content in one file
