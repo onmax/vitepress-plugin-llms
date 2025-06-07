@@ -52,7 +52,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.repository.full_name == 'okineadev/vitepress-plugin-llms'
 
-    permissions: {}
+    permissions:
+      contents: read
+      issues: write
 
     steps:
       - name: 📥 Checkout
