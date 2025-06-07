@@ -245,25 +245,23 @@ export interface LlmstxtSettings extends TemplateVariables {
 		  ) => DefaultTheme.Sidebar | undefined | Promise<DefaultTheme.Sidebar | undefined>)
 
 	/**
-	 * Determines how many directory levels deep to generate `llms.txt` files.
-	 *
-	 * - `1` (default): Generate `llms.txt` only in the root directory
-	 * - `2`: Generate `llms.txt` in the root and first-level subdirectories
-	 * - `3`: Generate `llms.txt` in the root, first-level, and second-level subdirectories
-	 *
-	 * Each `llms.txt` file will contain content relevant to its directory and subdirectories.
-	 *
-	 * @example
-	 * ```typescript
-	 * llmstxt({
-	 *     // Generate llms.txt in root and first-level subdirectories
-	 *     depth: 2
-	 * })
-	 * ```
-	 *
-	 * @default 1
+	 * Experimental features that may change in future versions.
 	 */
-	depth?: number
+	experimental?: {
+		/**
+		 * Determines how many directory levels deep to generate `llms.txt` files.
+		 *
+		 * - `1` (default): Generate `llms.txt` only in the root directory
+		 * - `2`: Generate `llms.txt` in the root and first-level subdirectories
+		 * - `3`: Generate `llms.txt` in the root, first-level, and second-level subdirectories
+		 * - And so on...
+		 *
+		 * Each `llms.txt` file will contain content relevant to its directory and subdirectories.
+		 *
+		 * @default 1
+		 */
+		depth?: number
+	}
 }
 
 /** Represents a prepared file, including its title and path. */

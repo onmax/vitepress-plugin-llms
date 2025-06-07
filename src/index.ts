@@ -56,7 +56,10 @@ function llmstxt(userSettings: LlmstxtSettings = {}): [Plugin, Plugin] {
 		excludeTeam: true,
 		workDir: undefined as unknown as string,
 		stripHTML: true,
-		depth: 1,
+		experimental: {
+			depth: 1,
+			...userSettings.experimental,
+		},
 		...userSettings,
 	}
 
@@ -254,7 +257,11 @@ function llmstxt(userSettings: LlmstxtSettings = {}): [Plugin, Plugin] {
 					}
 
 					// Get directories at specified depths
-					const directories = getDirectoriesAtDepths(mdFilesList, settings.workDir, settings.depth ?? 1)
+					const directories = getDirectoriesAtDepths(
+						mdFilesList,
+						settings.workDir,
+						settings.experimental?.depth ?? 1,
+					)
 
 					// Generate llms.txt for each directory at the specified depths
 					tasks.push(
@@ -306,7 +313,11 @@ function llmstxt(userSettings: LlmstxtSettings = {}): [Plugin, Plugin] {
 				// Generate llms-full.txt - all content in one file
 				if (settings.generateLLMsFullTxt) {
 					// Get directories at specified depths for llms-full.txt as well
-					const directories = getDirectoriesAtDepths(mdFilesList, settings.workDir, settings.depth ?? 1)
+					const directories = getDirectoriesAtDepths(
+						mdFilesList,
+						settings.workDir,
+						settings.experimental?.depth ?? 1,
+					)
 
 					// Generate llms-full.txt for each directory at the specified depths
 					tasks.push(

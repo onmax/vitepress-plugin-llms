@@ -321,12 +321,12 @@ describe('llmstxt plugin', () => {
 			})
 		})
 
-		describe('depth option', () => {
+		describe('experimental depth option', () => {
 			it('should generate llms.txt only in root when depth is 1 (default)', async () => {
 				plugin = llmstxt({
 					generateLLMsFullTxt: false,
 					generateLLMFriendlyDocsForEachPage: false,
-					depth: 1,
+					experimental: { depth: 1 },
 				})
 				// @ts-ignore
 				plugin[1].configResolved(mockConfig)
@@ -351,7 +351,7 @@ describe('llmstxt plugin', () => {
 				plugin = llmstxt({
 					generateLLMsFullTxt: false,
 					generateLLMFriendlyDocsForEachPage: false,
-					depth: 2,
+					experimental: { depth: 2 },
 				})
 				// @ts-ignore
 				plugin[1].configResolved(mockConfig)
@@ -380,7 +380,7 @@ describe('llmstxt plugin', () => {
 				plugin = llmstxt({
 					generateLLMsFullTxt: false,
 					generateLLMFriendlyDocsForEachPage: false,
-					depth: 3,
+					experimental: { depth: 3 },
 				})
 				// @ts-ignore
 				plugin[1].configResolved(mockConfig)
@@ -412,7 +412,7 @@ describe('llmstxt plugin', () => {
 				plugin = llmstxt({
 					generateLLMsFullTxt: false,
 					generateLLMFriendlyDocsForEachPage: false,
-					depth: 2,
+					experimental: { depth: 2 },
 				})
 				// @ts-ignore
 				plugin[1].configResolved(mockConfig)
@@ -457,7 +457,7 @@ describe('llmstxt plugin', () => {
 			it('should generate both llms.txt and llms-full.txt at each depth level', async () => {
 				plugin = llmstxt({
 					generateLLMFriendlyDocsForEachPage: false,
-					depth: 2,
+					experimental: { depth: 2 },
 				})
 				// @ts-ignore
 				plugin[1].configResolved(mockConfig)
@@ -491,7 +491,7 @@ describe('llmstxt plugin', () => {
 				plugin = llmstxt({
 					generateLLMsTxt: false,
 					generateLLMFriendlyDocsForEachPage: false,
-					depth: 2,
+					experimental: { depth: 2 },
 				})
 				// @ts-ignore
 				plugin[1].configResolved(mockConfig)

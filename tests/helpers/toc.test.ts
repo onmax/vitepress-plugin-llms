@@ -216,11 +216,7 @@ describe('generateTOC with directoryFilter', () => {
 			srcDir,
 			directoryFilter: '.',
 		})
-
-		expect(result).toContain('Getting started')
-		expect(result).toContain('Quickstart')
-		expect(result).toContain('Some other section')
-		expect(result).toContain('Some cool tool')
+		expect(result).toMatchSnapshot()
 	})
 
 	it('should filter files by directory when directoryFilter is specified', async () => {
@@ -229,12 +225,7 @@ describe('generateTOC with directoryFilter', () => {
 			directoryFilter: 'test',
 		})
 
-		// Should only include files from the test directory
-		expect(result).toContain('Getting started')
-		expect(result).toContain('Quickstart')
-		expect(result).toContain('Some other section')
-		// Should not include the index file from root
-		expect(result).not.toContain('Some cool tool')
+		expect(result).toMatchSnapshot()
 	})
 
 	it('should return empty TOC when no files match directoryFilter', async () => {
