@@ -166,17 +166,17 @@ export async function generateLLMsFullTxt(
 		? directoryFilter === '.'
 			? preparedFiles // Root directory includes all files
 			: preparedFiles.filter((file) => {
-					const relativePath = path.relative(srcDir, file.path)
+					const relativePath = file.path
 					return relativePath.startsWith(directoryFilter + path.sep) || relativePath === directoryFilter
 				})
 		: preparedFiles
 
 	const fileContents = await Promise.all(
 		filteredFiles.map(async (file) => {
-			const relativePath = path.relative(srcDir, file.path)
+			// file.path is already relative to srcDir, so use it directly
 			const metadata = await generateMetadata(file.file, {
 				domain,
-				filePath: relativePath,
+				filePath: file.path,
 				linksExtension,
 				cleanUrls,
 			})

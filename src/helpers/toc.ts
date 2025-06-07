@@ -260,7 +260,7 @@ export async function generateTOC(
 		? directoryFilter === '.'
 			? preparedFiles // Root directory includes all files
 			: preparedFiles.filter((file) => {
-					const relativePath = path.relative(srcDir, file.path)
+					const relativePath = file.path
 					return relativePath.startsWith(directoryFilter + path.sep) || relativePath === directoryFilter
 				})
 		: preparedFiles
@@ -284,7 +284,7 @@ export async function generateTOC(
 			// Find files that didn't match any section
 			const allSidebarPaths = await collectPathsFromSidebarItems(flattenedSidebarConfig)
 			const unsortedFiles = filteredFiles.filter((file) => {
-				const relativePath = `/${stripExtPosix(path.relative(srcDir, file.path))}`
+				const relativePath = `/${stripExtPosix(file.path)}`
 				return !allSidebarPaths.some((sidebarPath: string) => isPathMatch(relativePath, sidebarPath))
 			})
 
@@ -295,7 +295,7 @@ export async function generateTOC(
 				const tocEntries: string[] = []
 				await Promise.all(
 					unsortedFiles.map(async (file) => {
-						const relativePath = path.relative(srcDir, file.path)
+						const relativePath = file.path
 						tocEntries.push(generateTOCLink(file, domain, relativePath, linksExtension, cleanUrls))
 					}),
 				)
@@ -311,7 +311,7 @@ export async function generateTOC(
 	if (filteredFiles.length > 0) {
 		const tocEntries = await Promise.all(
 			filteredFiles.map(async (file) => {
-				const relativePath = path.relative(srcDir, file.path)
+				const relativePath = file.path
 				return generateTOCLink(file, domain, relativePath, linksExtension, cleanUrls)
 			}),
 		)

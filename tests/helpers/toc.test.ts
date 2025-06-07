@@ -212,7 +212,7 @@ describe('isPathMatch', () => {
 
 describe('generateTOC with directoryFilter', () => {
 	it('should include all files when directoryFilter is "." (root)', async () => {
-		const result = await generateTOC(preparedFilesSample({ srcDir }), {
+		const result = await generateTOC(preparedFilesSample, {
 			srcDir,
 			directoryFilter: '.',
 		})
@@ -220,7 +220,7 @@ describe('generateTOC with directoryFilter', () => {
 	})
 
 	it('should filter files by directory when directoryFilter is specified', async () => {
-		const result = await generateTOC(preparedFilesSample({ srcDir }), {
+		const result = await generateTOC(preparedFilesSample, {
 			srcDir,
 			directoryFilter: 'test',
 		})
@@ -229,7 +229,7 @@ describe('generateTOC with directoryFilter', () => {
 	})
 
 	it('should return empty TOC when no files match directoryFilter', async () => {
-		const result = await generateTOC(preparedFilesSample({ srcDir }), {
+		const result = await generateTOC(preparedFilesSample, {
 			srcDir,
 			directoryFilter: 'nonexistent',
 		})
