@@ -245,7 +245,9 @@ export interface LlmstxtSettings extends TemplateVariables {
 		  ) => DefaultTheme.Sidebar | undefined | Promise<DefaultTheme.Sidebar | undefined>)
 
 	/**
-	 * Experimental features that may change in future versions.
+	 * 🧪 Experimental features that may change in future versions.
+	 *
+	 * @experimental
 	 */
 	experimental?: {
 		/**
@@ -259,6 +261,7 @@ export interface LlmstxtSettings extends TemplateVariables {
 		 * Each `llms.txt` file will contain content relevant to its directory and subdirectories.
 		 *
 		 * @default 1
+		 * @experimental
 		 */
 		depth?: number
 	}
