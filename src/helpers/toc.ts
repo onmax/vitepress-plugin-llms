@@ -94,7 +94,7 @@ export function isPathMatch(filePath: string, sidebarPath: string): boolean {
 async function processSidebarSection(
 	section: DefaultTheme.SidebarItem,
 	preparedFiles: PreparedFile[],
-	srcDir: VitePressConfig['vitepress']['srcDir'],
+	outDir: string,
 	domain?: LlmstxtSettings['domain'],
 	linksExtension?: LinksExtension,
 	cleanUrls?: VitePressConfig['cleanUrls'],
@@ -142,7 +142,7 @@ async function processSidebarSection(
 						processSidebarSection(
 							item,
 							preparedFiles,
-							srcDir,
+							outDir,
 							domain,
 							linksExtension,
 							cleanUrls,
@@ -208,19 +208,13 @@ function flattenSidebarConfig(sidebarConfig: DefaultTheme.Sidebar): DefaultTheme
  * Options for generating a Table of Contents (TOC).
  */
 export interface GenerateTOCOptions {
-	/**
-	 * The VitePress source directory.
-	 */
-	srcDir: VitePressConfig['vitepress']['srcDir']
+	/** The VitePress output directory. */
+	outDir: string
 
-	/**
-	 * Optional domain to prefix URLs with.
-	 */
+	/** Optional domain to prefix URLs with. */
 	domain?: LlmstxtSettings['domain']
 
-	/**
-	 * Optional VitePress sidebar configuration.
-	 */
+	/** Optional VitePress sidebar configuration. */
 	sidebarConfig?: DefaultTheme.Sidebar
 
 	/** The link extension for generated links. */
@@ -252,7 +246,7 @@ export async function generateTOC(
 	preparedFiles: PreparedFile[],
 	options: GenerateTOCOptions,
 ): Promise<string> {
-	const { srcDir, domain, sidebarConfig, linksExtension, cleanUrls, directoryFilter } = options
+	const { outDir, domain, sidebarConfig, linksExtension, cleanUrls, directoryFilter } = options
 	let tableOfContent = ''
 
 	// Filter files by directory if directoryFilter is provided
@@ -275,7 +269,7 @@ export async function generateTOC(
 			// Process sections in parallel
 			const sectionResults = await Promise.all(
 				flattenedSidebarConfig.map((section) =>
-					processSidebarSection(section, filteredFiles, srcDir, domain, linksExtension, cleanUrls),
+					processSidebarSection(section, filteredFiles, outDir, domain, linksExtension, cleanUrls),
 				),
 			)
 

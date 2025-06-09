@@ -16,8 +16,8 @@ export interface GenerateLLMsTxtOptions {
 	/** Path to the main documentation file `index.md`.*/
 	indexMd: string
 
-	/** The source directory for the files. */
-	srcDir: VitePressConfig['vitepress']['srcDir']
+	/** The output directory for the files. */
+	outDir: string
 
 	/** Template to use for generating `llms.txt`. */
 	LLMsTxtTemplate?: LlmstxtSettings['customLLMsTxtTemplate']
@@ -73,7 +73,7 @@ export async function generateLLMsTxt(
 	preparedFiles: PreparedFile[],
 	{
 		indexMd,
-		srcDir,
+		outDir,
 		LLMsTxtTemplate = defaultLLMsTxtTemplate,
 		templateVariables = {},
 		vitepressConfig,
@@ -114,7 +114,7 @@ export async function generateLLMsTxt(
 		(!templateVariables.description && 'This file contains links to all documentation sections.')
 
 	templateVariables.toc ??= await generateTOC(preparedFiles, {
-		srcDir,
+		outDir,
 		domain,
 		sidebarConfig: sidebar || vitepressConfig?.themeConfig?.sidebar,
 		linksExtension,
@@ -129,9 +129,6 @@ export async function generateLLMsTxt(
  * Options for generating the `llms-full.txt` file.
  */
 export interface GenerateLLMsFullTxtOptions {
-	/** The source directory for the files. */
-	srcDir: VitePressConfig['vitepress']['srcDir']
-
 	/** The base domain for the generated links. */
 	domain?: LlmstxtSettings['domain']
 
@@ -159,7 +156,7 @@ export async function generateLLMsFullTxt(
 	preparedFiles: PreparedFile[],
 	options: GenerateLLMsFullTxtOptions,
 ) {
-	const { srcDir, domain, linksExtension, cleanUrls, directoryFilter } = options
+	const { domain, linksExtension, cleanUrls, directoryFilter } = options
 
 	// Filter files by directory if directoryFilter is provided
 	const filteredFiles = directoryFilter
@@ -173,7 +170,7 @@ export async function generateLLMsFullTxt(
 
 	const fileContents = await Promise.all(
 		filteredFiles.map(async (file) => {
-			// file.path is already relative to srcDir, so use it directly
+			// file.path is already relative to outDir, so use it directly
 			const metadata = await generateMetadata(file.file, {
 				domain,
 				filePath: file.path,
